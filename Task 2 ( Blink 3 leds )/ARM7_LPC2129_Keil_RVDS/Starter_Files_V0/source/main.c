@@ -170,7 +170,7 @@ int main( void )
 	/*Led1_Task creation*/
 				xTaskCreate(
                     Led1_Task,       					 /* Function that implements the task. */
-                    "Led1_Task",     				 /* Text name for the task. */
+                    "Led1_Task",     			  	 /* Text name for the task. */
                     70,      								 	 /* Stack size in words, not bytes. */
                     ( void * ) 0,    					 /* Parameter passed into the task. */
                     1,												 /* Priority at which the task is created. */
@@ -182,7 +182,7 @@ int main( void )
 			/*Led2_Task creation*/
 				xTaskCreate(
                     Led2_Task,       					 /* Function that implements the task. */
-                    "Led2_Task",     				 /* Text name for the task. */
+                    "Led2_Task",     				   /* Text name for the task. */
                     70,      								 	 /* Stack size in words, not bytes. */
                     ( void * ) 0,    					 /* Parameter passed into the task. */
                     2,												 /* Priority at which the task is created. */
@@ -194,7 +194,7 @@ int main( void )
 			/*Led3_Task creation*/
 				xTaskCreate(
                     Led3_Task,       					 /* Function that implements the task. */
-                    "Led3_Task",     				 /* Text name for the task. */
+                    "Led3_Task",     			  	 /* Text name for the task. */
                     70,      								 	 /* Stack size in words, not bytes. */
                     ( void * ) 0,    					 /* Parameter passed into the task. */
                     3,												 /* Priority at which the task is created. */

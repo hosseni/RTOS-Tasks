@@ -1,6 +1,6 @@
 /*
- * FreeRTOS V202112.00
- * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+ * FreeRTOS Kernel V10.2.0
+ * Copyright (C) 2019 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -54,64 +54,31 @@
 
 /* Standard includes. */
 #include <stdlib.h>
+#include <stdio.h>
 
 /* Scheduler includes. */
 #include "FreeRTOS.h"
 #include "task.h"
+#include "lpc21xx.h"
 
-/* Demo application includes. */
-#include "partest.h"
-#include "flash.h"
-#include "comtest2.h"
+/* Peripheral includes. */
 #include "serial.h"
-#include "PollQ.h"
-#include "BlockQ.h"
-#include "semtest.h"
-#include "dynamic.h"
+#include "GPIO.h"
+
+
+/* Handler init */
+TaskHandle_t Led1_Task_Handler = NULL;
+TaskHandle_t Led2_Task_Handler = NULL;
+TaskHandle_t Led3_Task_Handler = NULL;
 
 /*-----------------------------------------------------------*/
 
 /* Constants to setup I/O and processor. */
-#define mainTX_ENABLE		( ( unsigned long ) 0x00010000 )	/* UART1. */
-#define mainRX_ENABLE		( ( unsigned long ) 0x00040000 ) 	/* UART1. */
 #define mainBUS_CLK_FULL	( ( unsigned char ) 0x01 )
-#define mainLED_TO_OUTPUT	( ( unsigned long ) 0xff0000 )
 
 /* Constants for the ComTest demo application tasks. */
 #define mainCOM_TEST_BAUD_RATE	( ( unsigned long ) 115200 )
-#define mainCOM_TEST_LED		( 3 )
 
-/* Priorities for the demo application tasks. */
-#define mainLED_TASK_PRIORITY		( tskIDLE_PRIORITY + 2 )
-#define mainCOM_TEST_PRIORITY		( tskIDLE_PRIORITY + 2 )
-#define mainQUEUE_POLL_PRIORITY		( tskIDLE_PRIORITY + 2 )
-#define mainBLOCK_Q_PRIORITY		( tskIDLE_PRIORITY + 2 )
-#define mainSEM_TEST_PRIORITY		( tskIDLE_PRIORITY + 1 )
-#define mainCHECK_TASK_PRIORITY		( tskIDLE_PRIORITY + 3 )
-
-/* Constants used by the "check" task.  As described at the head of this file
-the check task toggles an LED.  The rate at which the LED flashes is used to
-indicate whether an error has been detected or not.  If the LED toggles every
-3 seconds then no errors have been detected.  If the rate increases to 500ms
-then an error has been detected in at least one of the demo application tasks. */
-#define mainCHECK_LED				( 7 )
-#define mainNO_ERROR_FLASH_PERIOD	( ( TickType_t ) 3000 / portTICK_PERIOD_MS  )
-#define mainERROR_FLASH_PERIOD		( ( TickType_t ) 500 / portTICK_PERIOD_MS  )
-
-/*-----------------------------------------------------------*/
-
-/*
- * Checks that all the demo application tasks are still executing without error
- * - as described at the top of the file.
- */
-static long prvCheckOtherTasksAreStillRunning( void );
-
-/*
- * The task that executes at the highest priority and calls 
- * prvCheckOtherTasksAreStillRunning().  See the description at the top
- * of the file.
- */
-static void vErrorChecks( void *pvParameters );
 
 /*
  * Configure the processor for use with the Keil demo board.  This is very
@@ -119,9 +86,72 @@ static void vErrorChecks( void *pvParameters );
  * file.
  */
 static void prvSetupHardware( void );
-
 /*-----------------------------------------------------------*/
 
+/*___________________________________________________________________________________________________________*/
+
+ 
+void Led1_Task( void * pvParameters )
+{
+    for( ;; )
+    {
+			/*set pin high*/
+			GPIO_write(PORT_0, PIN0, PIN_IS_HIGH);
+			
+			/*block for 100 msec*/
+      vTaskDelay( 100 );
+			
+			/*set pin low*/
+			GPIO_write(PORT_0, PIN0, PIN_IS_LOW);
+			
+			/*block for 100 msec*/
+		  vTaskDelay( 100 );
+		}
+}
+
+/*___________________________________________________________________________________________________________*/
+
+void Led2_Task( void * pvParameters )
+{
+    for( ;; )
+    {
+			/*set pin high*/
+			GPIO_write(PORT_0, PIN1, PIN_IS_HIGH);
+			
+			/*block for 500 msec*/
+      vTaskDelay( 500 );
+			
+			/*set pin low*/
+			GPIO_write(PORT_0, PIN1, PIN_IS_LOW);
+			
+			/*block for 500 msec*/
+		  vTaskDelay( 500 );
+		}
+}
+
+
+/*___________________________________________________________________________________________________________*/
+
+
+void Led3_Task( void * pvParameters )
+{
+    for( ;; )
+    {
+			/*set pin high*/
+			GPIO_write(PORT_0, PIN2, PIN_IS_HIGH);
+			
+			/*block for 1 second*/
+      vTaskDelay( 1000 );
+			
+			/*set pin low*/
+			GPIO_write(PORT_0, PIN2, PIN_IS_LOW);
+			
+			/*block for 1 second*/
+		  vTaskDelay( 1000 );
+		}
+}
+
+/*___________________________________________________________________________________________________________*/
 
 
 /*
@@ -133,18 +163,45 @@ int main( void )
 	/* Setup the hardware for use with the Keil demo board. */
 	prvSetupHardware();
 
-	/* Start the demo/test application tasks. */
-	vAltStartComTestTasks( mainCOM_TEST_PRIORITY, mainCOM_TEST_BAUD_RATE, mainCOM_TEST_LED );
-	vStartLEDFlashTasks( mainLED_TASK_PRIORITY );
-	vStartPolledQueueTasks( mainQUEUE_POLL_PRIORITY );
-	vStartBlockingQueueTasks( mainBLOCK_Q_PRIORITY );
-	vStartSemaphoreTasks( mainSEM_TEST_PRIORITY );
-	vStartDynamicPriorityTasks();
+	/*___________________________________________________________________________________________________________*/
 
-	/* Start the check task - which is defined in this file.  This is the task
-	that periodically checks to see that all the other tasks are executing 
-	without error. */
-	xTaskCreate( vErrorChecks, "Check", configMINIMAL_STACK_SIZE, NULL, mainCHECK_TASK_PRIORITY, NULL );
+    /* Create Tasks here */
+		
+	/*Led1_Task creation*/
+				xTaskCreate(
+                    Led1_Task,       					 /* Function that implements the task. */
+                    "Led1_Task",     			  	 /* Text name for the task. */
+                    70,      								 	 /* Stack size in words, not bytes. */
+                    ( void * ) 0,    					 /* Parameter passed into the task. */
+                    1,												 /* Priority at which the task is created. */
+                    &Led1_Task_Handler );      /* Used to pass out the created task's handle. */
+
+/*___________________________________________________________________________________________________________*/
+
+
+			/*Led2_Task creation*/
+				xTaskCreate(
+                    Led2_Task,       					 /* Function that implements the task. */
+                    "Led2_Task",     				   /* Text name for the task. */
+                    70,      								 	 /* Stack size in words, not bytes. */
+                    ( void * ) 0,    					 /* Parameter passed into the task. */
+                    2,												 /* Priority at which the task is created. */
+                    &Led2_Task_Handler );      /* Used to pass out the created task's handle. */
+										
+/*___________________________________________________________________________________________________________*/
+
+
+			/*Led3_Task creation*/
+				xTaskCreate(
+                    Led3_Task,       					 /* Function that implements the task. */
+                    "Led3_Task",     			  	 /* Text name for the task. */
+                    70,      								 	 /* Stack size in words, not bytes. */
+                    ( void * ) 0,    					 /* Parameter passed into the task. */
+                    3,												 /* Priority at which the task is created. */
+                    &Led3_Task_Handler );      /* Used to pass out the created task's handle. */
+
+/*___________________________________________________________________________________________________________*/
+										
 
 	/* Now all the tasks have been started - start the scheduler.
 
@@ -161,89 +218,19 @@ int main( void )
 }
 /*-----------------------------------------------------------*/
 
-static void vErrorChecks( void *pvParameters )
-{
-TickType_t xDelayPeriod = mainNO_ERROR_FLASH_PERIOD;
-
-	/* Parameters are not used. */
-	( void ) pvParameters;
-
-	/* Cycle for ever, delaying then checking all the other tasks are still
-	operating without error.  If an error is detected then the delay period
-	is decreased from mainNO_ERROR_FLASH_PERIOD to mainERROR_FLASH_PERIOD so
-	the on board LED flash rate will increase.
-
-	This task runs at the highest priority. */
-
-	for( ;; )
-	{
-		/* The period of the delay depends on whether an error has been 
-		detected or not.  If an error has been detected then the period
-		is reduced to increase the LED flash rate. */
-		vTaskDelay( xDelayPeriod );
-
-		if( prvCheckOtherTasksAreStillRunning() != pdPASS )
-		{
-			/* An error has been detected in one of the tasks - flash faster. */
-			xDelayPeriod = mainERROR_FLASH_PERIOD;
-		}
-
-		/* Toggle the LED before going back to wait for the next cycle. */
-		vParTestToggleLED( mainCHECK_LED );
-	}
-}
-/*-----------------------------------------------------------*/
-
 static void prvSetupHardware( void )
 {
 	/* Perform the hardware setup required.  This is minimal as most of the
 	setup is managed by the settings in the project file. */
 
-	/* Configure the UART1 pins.  All other pins remain at their default of 0. */
-	PINSEL0 |= mainTX_ENABLE;
-	PINSEL0 |= mainRX_ENABLE;
+	/* Configure UART */
+	xSerialPortInitMinimal(mainCOM_TEST_BAUD_RATE);
 
-	/* LED pins need to be output. */
-	IODIR1 = mainLED_TO_OUTPUT;
+	/* Configure GPIO */
+	GPIO_init();
 
 	/* Setup the peripheral bus to be the same as the PLL output. */
 	VPBDIV = mainBUS_CLK_FULL;
-}
-/*-----------------------------------------------------------*/
-
-static long prvCheckOtherTasksAreStillRunning( void )
-{
-long lReturn = pdPASS;
-
-	/* Check all the demo tasks (other than the flash tasks) to ensure
-	that they are all still running, and that none of them have detected
-	an error. */
-	if( xAreComTestTasksStillRunning() != pdPASS )
-	{
-		lReturn = pdFAIL;
-	}
-
-	if( xArePollingQueuesStillRunning() != pdTRUE )
-	{
-		lReturn = pdFAIL;
-	}
-
-	if( xAreBlockingQueuesStillRunning() != pdTRUE )
-	{
-		lReturn = pdFAIL;
-	}
-
-	if( xAreSemaphoreTasksStillRunning() != pdTRUE )
-	{
-		lReturn = pdFAIL;
-	}
-
-	if( xAreDynamicPriorityTasksStillRunning() != pdTRUE )
-	{
-		lReturn = pdFAIL;
-	}
-
-	return lReturn;
 }
 /*-----------------------------------------------------------*/
 
