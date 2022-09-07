@@ -77,8 +77,9 @@ TaskHandle_t Led_Blink_400_Handler = NULL;
 #define LESS_THAN_2_sec		2
 #define MORE_THAN_4_sec		3
 
-int button_state= LESS_THAN_2_sec;
 int counter=0;
+int button_state = LESS_THAN_2_sec;
+
 
 /*-----------------------------------------------------------*/
 
@@ -105,7 +106,7 @@ void Button_Get_State_Task( void * pvParameters )
     for( ;; )
     {
 		
-		if(  PIN_IS_HIGH == GPIO_read( PORT_0,PIN0 )  )
+		if(  PIN_IS_HIGH == GPIO_read( PORT_0, PIN0 )  )
 		{	
 			/*COUNT IF BUTTON IS PRESSED*/			
 			counter++;
@@ -114,8 +115,10 @@ void Button_Get_State_Task( void * pvParameters )
 		{
 			if(counter < 40)
 				button_state=LESS_THAN_2_sec;
+			
 			else if(counter < 80)
 				button_state = BETWEEN_2_4_sec;
+			
 			else
 				button_state = MORE_THAN_4_sec;
 				
@@ -135,7 +138,7 @@ void Led_Off_Task( void * pvParameters )
     for( ;; )
     {
 		
-		if(button_state==LESS_THAN_2_sec)
+		if(button_state == LESS_THAN_2_sec)
 		{
 			GPIO_write(PORT_0,PIN1,PIN_IS_LOW);
 		}
@@ -223,7 +226,7 @@ int main( void )
                     "Led_Off_Task",     				   /* Text name for the task. */
                     100,      								 	 	 /* Stack size in words, not bytes. */
                     ( void * ) 0,    					 		 /* Parameter passed into the task. */
-                    1,												  	 /* Priority at which the task is created. */
+                    2,												  	 /* Priority at which the task is created. */
                     &Led_Off_Handler );      			 /* Used to pass out the created task's handle. */
 										
 /*___________________________________________________________________________________________________________*/
@@ -235,7 +238,7 @@ int main( void )
                     "Led_Blink_100",     			  	 /* Text name for the task. */
                     70,      								 			 /* Stack size in words, not bytes. */
                     ( void * ) 0,    							 /* Parameter passed into the task. */
-                    1,														 /* Priority at which the task is created. */
+                    2,														 /* Priority at which the task is created. */
                     &Led_Blink_100_Handler );      /* Used to pass out the created task's handle. */
 
 /*___________________________________________________________________________________________________________*/
@@ -246,14 +249,13 @@ int main( void )
                     "Led_Blink_400",     			  	 /* Text name for the task. */
                     100,      									 	 /* Stack size in words, not bytes. */
                     ( void * ) 0,    							 /* Parameter passed into the task. */
-                    1,														 /* Priority at which the task is created. */
+                    2,														 /* Priority at which the task is created. */
                     &Led_Blink_400_Handler );      /* Used to pass out the created task's handle. */
 
 /*___________________________________________________________________________________________________________*/
 											
 
 	/* Now all the tasks have been started - start the scheduler.
-
 	NOTE : Tasks run in system mode and the scheduler runs in Supervisor mode.
 	The processor MUST be in supervisor mode when vTaskStartScheduler is 
 	called.  The demo applications included in the FreeRTOS.org download switch
@@ -281,6 +283,4 @@ static void prvSetupHardware( void )
 	/* Setup the peripheral bus to be the same as the PLL output. */
 	VPBDIV = mainBUS_CLK_FULL;
 }
-/*-----------------------------------------------------------*/
-
-
+/*-----------------------------------------------*/
