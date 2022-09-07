@@ -180,7 +180,7 @@ void Led_Blink_400( void * pvParameters )
     for( ;; )
     {
 			
-		if(button_state == MORE_THAN_4_sec)
+		if(button_state == BETWEEN_2_4_sec)
 		{	
 			GPIO_write(PORT_0,PIN1,PIN_IS_HIGH);
 			vTaskDelay(400);
