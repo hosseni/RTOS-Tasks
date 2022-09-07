@@ -185,7 +185,7 @@ int main( void )
                     "Led2_Task",     				   /* Text name for the task. */
                     70,      								 	 /* Stack size in words, not bytes. */
                     ( void * ) 0,    					 /* Parameter passed into the task. */
-                    2,												 /* Priority at which the task is created. */
+                    1,												 /* Priority at which the task is created. */
                     &Led2_Task_Handler );      /* Used to pass out the created task's handle. */
 										
 /*___________________________________________________________________________________________________________*/
@@ -197,7 +197,7 @@ int main( void )
                     "Led3_Task",     			  	 /* Text name for the task. */
                     70,      								 	 /* Stack size in words, not bytes. */
                     ( void * ) 0,    					 /* Parameter passed into the task. */
-                    3,												 /* Priority at which the task is created. */
+                    1,												 /* Priority at which the task is created. */
                     &Led3_Task_Handler );      /* Used to pass out the created task's handle. */
 
 /*___________________________________________________________________________________________________________*/
