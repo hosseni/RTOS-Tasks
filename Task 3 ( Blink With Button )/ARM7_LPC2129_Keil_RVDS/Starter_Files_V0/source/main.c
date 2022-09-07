@@ -67,18 +67,9 @@
 
 
 /* Handler init */
-TaskHandle_t Button_Get_State_Handler = NULL;
-TaskHandle_t Led_Off_Handler = NULL;
-TaskHandle_t Led_Blink_100_Handler    = NULL;
-TaskHandle_t Led_Blink_400_Handler = NULL;
-
-
-#define BETWEEN_2_4_sec		1
-#define LESS_THAN_2_sec		2
-#define MORE_THAN_4_sec		3
-
-int button_state= LESS_THAN_2_sec;
-int counter=0;
+TaskHandle_t Led1_Task_Handler = NULL;
+TaskHandle_t Led2_Task_Handler = NULL;
+TaskHandle_t Led3_Task_Handler = NULL;
 
 /*-----------------------------------------------------------*/
 
@@ -100,48 +91,41 @@ static void prvSetupHardware( void );
 /*___________________________________________________________________________________________________________*/
 
  
-void Button_Get_State_Task( void * pvParameters )
+void Led1_Task( void * pvParameters )
 {
     for( ;; )
     {
-		
-	
-		if(  PIN_IS_HIGH == GPIO_read( PORT_0,PIN0 )  )
-		{	
-			/*COUNT IF BUTTON IS PRESSED*/			
-			counter++;
-		}	
-		else if(( GPIO_read(PORT_0,PIN0)==PIN_IS_LOW) && (counter !=0) )
-		{
-			if(counter < 40)
-				button_state=LESS_THAN_2_sec;
-			else if(counter < 80)
-				button_state = BETWEEN_2_4_sec;
-			else
-				button_state = MORE_THAN_4_sec;
-				
-			counter=0;
+			/*set pin high*/
+			GPIO_write(PORT_0, PIN0, PIN_IS_HIGH);
+			
+			/*block for 100 msec*/
+      vTaskDelay( 100 );
+			
+			/*set pin low*/
+			GPIO_write(PORT_0, PIN0, PIN_IS_LOW);
+			
+			/*block for 100 msec*/
+		  vTaskDelay( 100 );
 		}
-		else {		}
-		
-		vTaskDelay (50);
-		
-	}
 }
 
 /*___________________________________________________________________________________________________________*/
 
-void Led_Off_Task( void * pvParameters )
+void Led2_Task( void * pvParameters )
 {
     for( ;; )
     {
-		
-		if(button_state==LESS_THAN_2_sec)
-		{
-			GPIO_write(PORT_0,PIN1,PIN_IS_LOW);
-		}
-		
-		vTaskDelay(100);
+			/*set pin high*/
+			GPIO_write(PORT_0, PIN1, PIN_IS_HIGH);
+			
+			/*block for 500 msec*/
+      vTaskDelay( 500 );
+			
+			/*set pin low*/
+			GPIO_write(PORT_0, PIN1, PIN_IS_LOW);
+			
+			/*block for 500 msec*/
+		  vTaskDelay( 500 );
 		}
 }
 
@@ -149,44 +133,21 @@ void Led_Off_Task( void * pvParameters )
 /*___________________________________________________________________________________________________________*/
 
 
-void Led_Blink_100( void * pvParameters )
+void Led3_Task( void * pvParameters )
 {
-	int led_state=0;
-			
     for( ;; )
     {
+			/*set pin high*/
+			GPIO_write(PORT_0, PIN2, PIN_IS_HIGH);
 			
-		if(button_state == MORE_THAN_4_sec)
-		{	
-			GPIO_write(PORT_0,PIN1,PIN_IS_HIGH);
-			vTaskDelay(100);
-			GPIO_write(PORT_0,PIN1,PIN_IS_LOW);
-			vTaskDelay(100);	
-		}
-		else 
-			vTaskDelay(100);	
-		}
-}
-
-/*___________________________________________________________________________________________________________*/
-
-
-void Led_Blink_400( void * pvParameters )
-{
-	int led_state=0;
+			/*block for 1 second*/
+      vTaskDelay( 1000 );
 			
-    for( ;; )
-    {
+			/*set pin low*/
+			GPIO_write(PORT_0, PIN2, PIN_IS_LOW);
 			
-		if(button_state == MORE_THAN_4_sec)
-		{	
-			GPIO_write(PORT_0,PIN1,PIN_IS_HIGH);
-			vTaskDelay(400);
-			GPIO_write(PORT_0,PIN1,PIN_IS_LOW);
-			vTaskDelay(400);	
-		}
-		else 
-			vTaskDelay(100);	
+			/*block for 1 second*/
+		  vTaskDelay( 1000 );
 		}
 }
 
@@ -206,52 +167,41 @@ int main( void )
 
     /* Create Tasks here */
 		
-	/*Button_Get_State_Task creation*/
+	/*Led1_Task creation*/
 				xTaskCreate(
-                    Button_Get_State_Task,       					 /* Function that implements the task. */
-                    "Button_Get_State_Task",     			  	 /* Text name for the task. */
-                    100,      								 	 /* Stack size in words, not bytes. */
+                    Led1_Task,       					 /* Function that implements the task. */
+                    "Led1_Task",     			  	 /* Text name for the task. */
+                    70,      								 	 /* Stack size in words, not bytes. */
                     ( void * ) 0,    					 /* Parameter passed into the task. */
                     1,												 /* Priority at which the task is created. */
-                    &Button_Get_State_Handler );      /* Used to pass out the created task's handle. */
+                    &Led1_Task_Handler );      /* Used to pass out the created task's handle. */
 
 /*___________________________________________________________________________________________________________*/
 
 
-			/*Led_Off_Task creation*/
+			/*Led2_Task creation*/
 				xTaskCreate(
-                    Led_Off_Task,       					 /* Function that implements the task. */
-                    "Led_Off_Task",     				   /* Text name for the task. */
-                    100,      								 	 /* Stack size in words, not bytes. */
+                    Led2_Task,       					 /* Function that implements the task. */
+                    "Led2_Task",     				   /* Text name for the task. */
+                    70,      								 	 /* Stack size in words, not bytes. */
                     ( void * ) 0,    					 /* Parameter passed into the task. */
-                    1,												 /* Priority at which the task is created. */
-                    &Led_Off_Handler );      /* Used to pass out the created task's handle. */
+                    2,												 /* Priority at which the task is created. */
+                    &Led2_Task_Handler );      /* Used to pass out the created task's handle. */
 										
 /*___________________________________________________________________________________________________________*/
 
 
-			/*Led_Blink_100 creation*/
+			/*Led3_Task creation*/
 				xTaskCreate(
-                    Led_Blink_100,       					 /* Function that implements the task. */
-                    "Led_Blink_100",     			  	 /* Text name for the task. */
+                    Led3_Task,       					 /* Function that implements the task. */
+                    "Led3_Task",     			  	 /* Text name for the task. */
                     70,      								 	 /* Stack size in words, not bytes. */
                     ( void * ) 0,    					 /* Parameter passed into the task. */
-                    1,												 /* Priority at which the task is created. */
-                    &Led_Blink_100_Handler );      /* Used to pass out the created task's handle. */
+                    3,												 /* Priority at which the task is created. */
+                    &Led3_Task_Handler );      /* Used to pass out the created task's handle. */
 
 /*___________________________________________________________________________________________________________*/
-			
-			/*Led_Blink_400 creation*/
-				xTaskCreate(
-                    Led_Blink_400,       					 /* Function that implements the task. */
-                    "Led_Blink_100",     			  	 /* Text name for the task. */
-                    100,      								 	 /* Stack size in words, not bytes. */
-                    ( void * ) 0,    					 /* Parameter passed into the task. */
-                    1,												 /* Priority at which the task is created. */
-                    &Led_Blink_400_Handler );      /* Used to pass out the created task's handle. */
-
-/*___________________________________________________________________________________________________________*/
-											
+										
 
 	/* Now all the tasks have been started - start the scheduler.
 

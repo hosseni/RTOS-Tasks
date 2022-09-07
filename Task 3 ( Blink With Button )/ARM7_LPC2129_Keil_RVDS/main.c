@@ -105,7 +105,6 @@ void Button_Get_State_Task( void * pvParameters )
     for( ;; )
     {
 		
-	
 		if(  PIN_IS_HIGH == GPIO_read( PORT_0,PIN0 )  )
 		{	
 			/*COUNT IF BUTTON IS PRESSED*/			
@@ -208,11 +207,11 @@ int main( void )
 		
 	/*Button_Get_State_Task creation*/
 				xTaskCreate(
-                    Button_Get_State_Task,       					 /* Function that implements the task. */
-                    "Button_Get_State_Task",     			  	 /* Text name for the task. */
-                    100,      								 	 /* Stack size in words, not bytes. */
-                    ( void * ) 0,    					 /* Parameter passed into the task. */
-                    1,												 /* Priority at which the task is created. */
+                    Button_Get_State_Task,       			/* Function that implements the task. */
+                    "Button_Get_State_Task",        	/* Text name for the task. */
+                    100,      								 	 			/* Stack size in words, not bytes. */
+                    ( void * ) 0,    								 	/* Parameter passed into the task. */
+                    1,														  	/* Priority at which the task is created. */
                     &Button_Get_State_Handler );      /* Used to pass out the created task's handle. */
 
 /*___________________________________________________________________________________________________________*/
@@ -222,10 +221,10 @@ int main( void )
 				xTaskCreate(
                     Led_Off_Task,       					 /* Function that implements the task. */
                     "Led_Off_Task",     				   /* Text name for the task. */
-                    100,      								 	 /* Stack size in words, not bytes. */
-                    ( void * ) 0,    					 /* Parameter passed into the task. */
-                    1,												 /* Priority at which the task is created. */
-                    &Led_Off_Handler );      /* Used to pass out the created task's handle. */
+                    100,      								 	 	 /* Stack size in words, not bytes. */
+                    ( void * ) 0,    					 		 /* Parameter passed into the task. */
+                    1,												  	 /* Priority at which the task is created. */
+                    &Led_Off_Handler );      			 /* Used to pass out the created task's handle. */
 										
 /*___________________________________________________________________________________________________________*/
 
@@ -234,9 +233,9 @@ int main( void )
 				xTaskCreate(
                     Led_Blink_100,       					 /* Function that implements the task. */
                     "Led_Blink_100",     			  	 /* Text name for the task. */
-                    70,      								 	 /* Stack size in words, not bytes. */
-                    ( void * ) 0,    					 /* Parameter passed into the task. */
-                    1,												 /* Priority at which the task is created. */
+                    70,      								 			 /* Stack size in words, not bytes. */
+                    ( void * ) 0,    							 /* Parameter passed into the task. */
+                    1,														 /* Priority at which the task is created. */
                     &Led_Blink_100_Handler );      /* Used to pass out the created task's handle. */
 
 /*___________________________________________________________________________________________________________*/
@@ -244,10 +243,10 @@ int main( void )
 			/*Led_Blink_400 creation*/
 				xTaskCreate(
                     Led_Blink_400,       					 /* Function that implements the task. */
-                    "Led_Blink_100",     			  	 /* Text name for the task. */
-                    100,      								 	 /* Stack size in words, not bytes. */
-                    ( void * ) 0,    					 /* Parameter passed into the task. */
-                    1,												 /* Priority at which the task is created. */
+                    "Led_Blink_400",     			  	 /* Text name for the task. */
+                    100,      									 	 /* Stack size in words, not bytes. */
+                    ( void * ) 0,    							 /* Parameter passed into the task. */
+                    1,														 /* Priority at which the task is created. */
                     &Led_Blink_400_Handler );      /* Used to pass out the created task's handle. */
 
 /*___________________________________________________________________________________________________________*/
