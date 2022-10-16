@@ -54,7 +54,7 @@
 #define configUSE_IDLE_HOOK			1
 #define configUSE_TICK_HOOK			1
 #define configCPU_CLOCK_HZ			( ( unsigned long ) 60000000 )	/* =12.0MHz xtal multiplied by 5 using the PLL. */
-#define configTICK_RATE_HZ			( ( TickType_t ) 10000 ) /* 100 MICRO */
+#define configTICK_RATE_HZ			( ( TickType_t ) 1000 ) 
 #define configMAX_PRIORITIES		( 4 )
 #define configMINIMAL_STACK_SIZE	( ( unsigned short ) 90 )
 #define configTOTAL_HEAP_SIZE		( ( size_t ) 13 * 1024 )
