@@ -56,20 +56,19 @@ TaskTimingParameters task1Time,task2Time;
 uint8_t CPU_load =0;
 
 /*-----------------------------------------------------------*/
-void task1(void * pvParameters) /* Execution time = 2ms - Deadline = 5ms */
+void task1(void * pvParameters) 
 {
 	TickType_t xLastWakeTime1;
 	uint32_t i=0;
 	//TickType_t StartTime,EndTime;
   xLastWakeTime1 = xTaskGetTickCount();
 	
-	/* This task is going to be represented by a voltage scale of 1. */
    vTaskSetApplicationTaskTag( task1_Handle, (TaskHookFunction_t ) 1 );
 	
 	for( ; ; ) 
 	{
 		
-		vTaskDelayUntil( &xLastWakeTime1, pdMS_TO_TICKS(5) ); /* 10 ms*/ 
+		vTaskDelayUntil( &xLastWakeTime1, pdMS_TO_TICKS(5) ); 
 		
 		/* IDLE task */
 		GPIO_write(PORT_0,PIN2,PIN_IS_LOW);
