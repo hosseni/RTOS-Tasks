@@ -200,7 +200,7 @@ Options 2,0,0  // Target 'RTOSDemo_THUMB'
  ADSLDIF ()
  ADSLDDW ()
   OPTDL (SARM.DLL)(-cLPC2100)(DARMP.DLL)(-pLPC21x9)(SARM.DLL)()(TARMP.DLL)(-pLPC21x9)
-  OPTDBG 49150,16,()()()()()()()()()() (BIN\UL2ARM.DLL)()()()
+  OPTDBG 49150,0,()()()()()()()()()() (BIN\UL2ARM.DLL)()()()
  FLASH1 { 1,0,0,0,1,0,0,0,0,16,0,0,0,0,0,0,0,0,0,0 }
  FLASH2 (BIN\UL2ARM.DLL)
  FLASH3 ("LPC210x_ISP.EXE" ("#H" ^X $D COM1: 9600 1))
