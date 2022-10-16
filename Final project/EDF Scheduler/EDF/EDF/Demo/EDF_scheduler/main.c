@@ -69,7 +69,7 @@ void task1(void * pvParameters) /* Execution time = 2ms - Deadline = 5ms */
 	for( ; ; ) 
 	{
 		
-		vTaskDelayUntil( &xLastWakeTime1, 50 ); /* 10 ms*/ 
+		vTaskDelayUntil( &xLastWakeTime1, pdMS_TO_TICKS(5) ); 
 		
 		/* IDLE task */
 		GPIO_write(PORT_0,PIN2,PIN_IS_LOW);
@@ -77,7 +77,6 @@ void task1(void * pvParameters) /* Execution time = 2ms - Deadline = 5ms */
 		for(i=0;i<18000;i++)
 		{
 			i = i;
-	
 		}
 	}
 }
@@ -93,7 +92,7 @@ void task2(void * pvParameters)
 	
 	for( ; ; ) 
 	{
-		vTaskDelayUntil( &xLastWakeTime2, 150 );
+		vTaskDelayUntil( &xLastWakeTime2, pdMS_TO_TICKS(15) );
 		
 		/* IDLE task */
 		GPIO_write(PORT_0,PIN2,PIN_IS_LOW);
@@ -136,8 +135,8 @@ int main( void )
 
 	
   /* Create Tasks here */
-  xTaskCreatePeriodic(task1,"Task1",100,NULL,1,&task1_Handle,50);
-	xTaskCreatePeriodic(task2,"Task2",100,NULL,1,&task2_Handle,150);
+  xTaskCreatePeriodic(task1,"Task1",100,NULL,1,&task1_Handle,5);
+	xTaskCreatePeriodic(task2,"Task2",100,NULL,1,&task2_Handle,15);
 	
 	/* Initialize tasks Exection time to zero */
 	task1Time.TotalExecution =0;
